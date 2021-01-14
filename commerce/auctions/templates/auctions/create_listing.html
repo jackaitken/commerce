@@ -7,8 +7,17 @@
         <input type="text" placeholder="Title" name="title">
         <textarea name="description" id="" cols="30" rows="10" 
         placeholder="Write your desription here"></textarea>
-        <input type="number" placeholder="Starting Price" name="price">
+        <input type="number" placeholder="Starting Price" name="price" min="0">
         <input type="text" name="url" value="Photo URL">
+        <label for="category">Select one Category</label>
+        <select name="category">
+            <option value="E">Electronics</option>
+            <option value="H">Home</option>
+            <option value="F">Fashion</option>
+            <option value="T">Toys</option>
+            <option value="A">Automobiles</option>
+            <option value="O">Other</option>
+        </select>
         <input type="submit" value="Create Listing">
     </form>
     

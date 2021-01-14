@@ -5,10 +5,20 @@
     <div><img src="{{ listing.image }}" alt="{{ listing.title }}" width="300px"></div>
     <div> <strong>Description: </strong>{{ listing.description }}</div>
     <div> <strong>Price: </strong> ${{ listing.price }} </div>
-    <div>Posted by User: <strong>{{ listing.user }}</strong></div>
+    <div><strong>Category: </strong>{{ category }}</div>
+    {% if current_user %}
+        <div>Posted by: <strong>You</strong></div>
+    {% else %}
+        <div>Posted by User: <strong>{{ listing.user }}</strong></div>
+    {% endif %}
+    
     <div>
-        <strong>Comments:</strong>
-        <div>{{ listing.comments.comment }}</div>
-        <div>-{{ listing.comments.user }}</div>
+        <strong>{{ num_comments }} Comments:</strong>
+        {% if listing.comments %}
+            <div>{{ listing.comments.comment }}</div>
+            <div>-{{ listing.comments.user }}</div>
+        {% else %}
+            <div>No comments yet on listing</div>
     </div>
+        {% endif %}
 {% endblock %}

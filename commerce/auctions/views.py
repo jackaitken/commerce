@@ -73,26 +73,33 @@ def create_listing(request):
         description = request.POST["description"]
         price = int(request.POST["price"])
         image = request.POST["url"]
+        category = request.POST["category"]
         user = request.user
 
         new_listing = Listing(
-            user=user, title=title, description=description, price=price, image=image
+            user=user, title=title, description=description, price=price, image=image, category=category
         )
         new_listing.save()
-
-        return render (request, "auctions/listing.html", {
-            "title": title,
-            "description": description,
-            "price": price,
-            "image": image
-        })
+        return HttpResponseRedirect(reverse("listing", args={new_listing.id}))
 
 def listing(request, listing_id):
     if request.method == "GET":
-        listing = Listing.objects.get(id=listing_id)
-        return render(request, "auctions/listing.html",{
-            "listing": listing
-        })
+        listing = Listing.objects.get(pk=listing_id)
+        all_comments = Comment.objects.get()
+        
+        #condition for "posted by" information in template
+        if listing.user == request.user:
+            return render(request, "auctions/listing.html",{
+                "listing": listing,
+                "current_user": request.user,
+                "category": listing.get_category_display()
+            })
+        else:
+            return render(request, "auctions/listing.html",{
+                "listing": listing,
+                "category": listing.get_category_display()
+            })
+
 
 def watchlist(request):
     return render(request, "auctions/watchlist.html")
