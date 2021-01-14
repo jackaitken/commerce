@@ -17,9 +17,6 @@ class Listing(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="listing")
     image = models.URLField(null=True, blank=True, verbose_name="image")
 
-    def __str__(self):
-        return f"{self.title}"
-
 class Comment(models.Model):
     comment = models.CharField(max_length=200)
     user= models.ForeignKey(User, on_delete=models.CASCADE, related_name="comments")

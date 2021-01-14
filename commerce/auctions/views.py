@@ -87,9 +87,12 @@ def create_listing(request):
             "image": image
         })
 
-def listing(request, listing):
+def listing(request, listing_id):
     if request.method == "GET":
-        return render(request, "auctions/listing.html")
+        listing = Listing.objects.get(id=listing_id)
+        return render(request, "auctions/listing.html",{
+            "listing": listing
+        })
 
 def watchlist(request):
     return render(request, "auctions/watchlist.html")
