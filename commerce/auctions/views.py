@@ -65,18 +65,18 @@ def register(request):
     else:
         return render(request, "auctions/register.html")
 
-def create_listing(request, user):
+def create_listing(request):
     if request.method == "GET":
         return render(request, "auctions/create_listing.html")
     else:
         title = request.POST["title"]
         description = request.POST["description"]
         price = int(request.POST["price"])
-        category = request.POST["category"]
         image = request.POST["url"]
+        user = request.user
 
         new_listing = Listing(
-            title=title, description=description, price=price, category=category, image=image
+            user=user, title=title, description=description, price=price, image=image
         )
         new_listing.save()
 
@@ -84,12 +84,12 @@ def create_listing(request, user):
             "title": title,
             "description": description,
             "price": price,
-            "category": category,
             "image": image
         })
 
+def listing(request, listing):
+    if request.method == "GET":
+        return render(request, "auctions/listing.html")
+
 def watchlist(request):
     return render(request, "auctions/watchlist.html")
-
-def categories(request):
-    return render(request, "auctions/categories.html")

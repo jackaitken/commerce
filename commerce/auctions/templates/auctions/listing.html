@@ -1,8 +1,8 @@
 {% extends "auctions/layout.html" %}
 
 {% block body %}
-    <h2>{{ title }}</h2>
-    <div>{{ description }}</div>
-    <div>{{ price }} </div>
-    <div><a href="{{ image }}">Click here to view product</a></div>
+    <h2>{{ listing.title }}</h2>
+    <div>{{ listing.description }}</div>
+    <div>{{ listing.price }} </div>
+    <div>Posted by {{ user }}</div>
 {% endblock %}
