@@ -2,7 +2,13 @@
 
 {% block body %}
     <h2>{{ listing.title }}</h2>
-    <div>{{ listing.description }}</div>
-    <div>{{ listing.price }} </div>
+    <div><img src="{{ listing.image }}" alt="{{ listing.title }}" width="300px"></div>
+    <div> <strong>Description: </strong>{{ listing.description }}</div>
+    <div> <strong>Price: </strong> ${{ listing.price }} </div>
     <div>Posted by User: <strong>{{ listing.user }}</strong></div>
+    <div>
+        <strong>Comments:</strong>
+        <div>{{ listing.comments.comment }}</div>
+        <div>-{{ listing.comments.user }}</div>
+    </div>
 {% endblock %}
