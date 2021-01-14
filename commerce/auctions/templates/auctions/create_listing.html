@@ -2,6 +2,15 @@
 
 {% block body %}
     <h2>Create Listing</h2>
-
+    <form action="{% url 'create_listing' %}" method="post">
+        {% csrf_token %}
+        <input type="text" placeholder="Title" name="title">
+        <textarea name="description" id="" cols="30" rows="10" 
+        placeholder="Write your desription here"></textarea>
+        <input type="number" placeholder="Starting Price" name="price">
+        <input type="text" name="category" placeholder="Add a category">
+        <input type="text" name="url" value="Photo URL">
+        <input type="submit" value="Create Listing">
+    </form>
     
-{% endblock %
+{% endblock %}
