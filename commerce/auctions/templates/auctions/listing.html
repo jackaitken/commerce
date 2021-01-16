@@ -1,12 +1,13 @@
 {% extends "auctions/layout.html" %}
+{% load humanize %}
 
 {% block body %}
     <h2>{{ listing.title }}</h2>
     <div><img src="{{ listing.image }}" alt="{{ listing.title }}" width="500px"></div>
     <div> <strong>Description: </strong>{{ listing.description }}</div>
-    <div> <strong>Price: </strong> ${{ listing.price }} </div>
+    <div> <strong>Price: </strong> ${{ listing.price|intcomma }} </div>
     <div><strong>Category: </strong>{{ category }}</div>
-    {% if current_user %}
+    {% if listing.user == current_user %}
         <div>Posted by: <strong>You</strong></div>
     {% else %}
         <div>Posted by User: <strong>{{ listing.user }}</strong></div>
@@ -17,10 +18,14 @@
         <hr>
         <div>
             {% for comment in comments %}
-            <div><em>Title:</em> <strong>{{ comment.title }}</strong></div>
-            <div><em>Comment:</em> {{ comment.comment }}</div>
-            <div><em>Posted by:</em> <strong>{{ comment.user }}</strong></div>
-            <hr>
+                <div><em>Title:</em> <strong>{{ comment.title }}</strong></div>
+                <div><em>Comment:</em> {{ comment.comment }}</div>
+                {% if current_user == comment.user %}
+                    <div><em>Posted by:</em> <strong>You</strong></div>
+                {% else %}
+                    <div><em>Posted by:</em> <strong>{{ comment.user }}</strong></div>
+                {% endif %}    
+                <hr>
             {% endfor %}
         </div>
         <form action="{% url 'listing' listing.id %}" method="post">
@@ -30,14 +35,4 @@
             <div><input type="submit" value="Submit Comment"></div>
         </form>
     </div>
-
-    <!-- <div>
-        <strong>{{ num_comments }} Comments:</strong>
-        {% if listing.comments %}
-            <div>{{ listing.comments.comment }}</div>
-            <div>-{{ listing.comments.user }}</div>
-        {% else %}
-            <div>No comments yet on listing</div>
-    </div> -->
-        {% endif %}
 {% endblock %}

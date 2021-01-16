@@ -1,4 +1,5 @@
 {% extends "auctions/layout.html" %}
+{% load humanize %}
 
 {% block body %}
     <h2>Active Listings</h2>
@@ -8,7 +9,7 @@
             {% for listing in listings %}
             <li><a href="{% url 'listing' listing.id %}">{{ listing.title }}</a></li>
             <div><img src="{{ listing.image }}" alt="{{ listing.title }}" width="400"></div>
-            <div><strong>Price: </strong>${{ listing.price }}</div>
+            <div><strong>Price: </strong>${{ listing.price|intcomma  }}</div>
             <div><strong>Description: </strong>{{ listing.description }}</div>
             <hr>
             {% endfor %}

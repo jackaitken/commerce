@@ -86,21 +86,27 @@ def listing(request, listing_id):
     if request.method == "GET":
         listing = Listing.objects.get(pk=listing_id)
         comments = listing.comment.all()
+        return render(request, "auctions/listing.html",{
+            "listing": listing,
+            "current_user": request.user,
+            "category": listing.get_category_display(),
+            "comments": comments
+        })
         
-        #condition for "posted by" information in template
-        if listing.user == request.user:
-            return render(request, "auctions/listing.html",{
-                "listing": listing,
-                "current_user": request.user,
-                "category": listing.get_category_display(),
-                "comments": comments
-            })
-        else:
-            return render(request, "auctions/listing.html",{
-                "listing": listing,
-                "category": listing.get_category_display(),
-                "comments": comments
-            })
+        # #condition for "posted by" information in template
+        # if listing.user == request.user:
+        #     return render(request, "auctions/listing.html",{
+        #         "listing": listing,
+        #         "current_user": request.user,
+        #         "category": listing.get_category_display(),
+        #         "comment": comments
+        #     })
+        # else:
+        #     return render(request, "auctions/listing.html",{
+        #         "listing": listing,
+        #         "category": listing.get_category_display(),
+        #         "comments": comments
+        #     })
     else:
         comment_title = request.POST["title"]
         comment = request.POST["comment"]
