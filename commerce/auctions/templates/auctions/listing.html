@@ -2,7 +2,7 @@
 
 {% block body %}
     <h2>{{ listing.title }}</h2>
-    <div><img src="{{ listing.image }}" alt="{{ listing.title }}" width="300px"></div>
+    <div><img src="{{ listing.image }}" alt="{{ listing.title }}" width="500px"></div>
     <div> <strong>Description: </strong>{{ listing.description }}</div>
     <div> <strong>Price: </strong> ${{ listing.price }} </div>
     <div><strong>Category: </strong>{{ category }}</div>
@@ -13,12 +13,31 @@
     {% endif %}
     
     <div>
+        <strong> {{ comments|length }} Comment(s):</strong>
+        <hr>
+        <div>
+            {% for comment in comments %}
+            <div><em>Title:</em> <strong>{{ comment.title }}</strong></div>
+            <div><em>Comment:</em> {{ comment.comment }}</div>
+            <div><em>Posted by:</em> <strong>{{ comment.user }}</strong></div>
+            <hr>
+            {% endfor %}
+        </div>
+        <form action="{% url 'listing' listing.id %}" method="post">
+            {% csrf_token %}
+            <div style="padding-bottom: 10px;"><input type="text" name="title" placeholder="Title"></div>
+            <textarea name="comment" cols="50" rows="5" placeholder="Add a comment"></textarea>
+            <div><input type="submit" value="Submit Comment"></div>
+        </form>
+    </div>
+
+    <!-- <div>
         <strong>{{ num_comments }} Comments:</strong>
         {% if listing.comments %}
             <div>{{ listing.comments.comment }}</div>
             <div>-{{ listing.comments.user }}</div>
         {% else %}
             <div>No comments yet on listing</div>
-    </div>
+    </div> -->
         {% endif %}
 {% endblock %}

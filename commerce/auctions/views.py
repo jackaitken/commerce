@@ -85,21 +85,32 @@ def create_listing(request):
 def listing(request, listing_id):
     if request.method == "GET":
         listing = Listing.objects.get(pk=listing_id)
-        all_comments = Comment.objects.get()
+        comments = listing.comment.all()
         
         #condition for "posted by" information in template
         if listing.user == request.user:
             return render(request, "auctions/listing.html",{
                 "listing": listing,
                 "current_user": request.user,
-                "category": listing.get_category_display()
+                "category": listing.get_category_display(),
+                "comments": comments
             })
         else:
             return render(request, "auctions/listing.html",{
                 "listing": listing,
-                "category": listing.get_category_display()
+                "category": listing.get_category_display(),
+                "comments": comments
             })
+    else:
+        comment_title = request.POST["title"]
+        comment = request.POST["comment"]
 
+        new_comment = Comment(
+            title=comment_title, comment=comment, user=request.user
+        )
+        listing = Listing.objects.get(pk=listing_id)
+        listing.comment.add(new_comment)
+        return HttpResponseRedirect(reverse("listing", args=(listing.id)))
 
 def watchlist(request):
     return render(request, "auctions/watchlist.html")
