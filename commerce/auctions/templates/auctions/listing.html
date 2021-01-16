@@ -28,11 +28,17 @@
                 <hr>
             {% endfor %}
         </div>
-        <form action="{% url 'listing' listing.id %}" method="post">
-            {% csrf_token %}
-            <div style="padding-bottom: 10px;"><input type="text" name="title" placeholder="Title"></div>
-            <textarea name="comment" cols="50" rows="5" placeholder="Add a comment"></textarea>
-            <div><input type="submit" value="Submit Comment"></div>
-        </form>
+        {% if user.is_authenticated is True %}
+            <form action="{% url 'listing' listing.id %}" method="post">
+                {% csrf_token %}
+                <div style="padding-bottom: 10px;"><input type="text" name="title" placeholder="Title"></div>
+                <textarea name="comment" cols="50" rows="5" placeholder="Add a comment"></textarea>
+                <div><input type="submit" value="Submit Comment"></div>
+            </form>
+        {% else %}
+            <div>
+                Please <a href="{% url 'login'%}">Login</a> or <a href="{% url 'register' %}">Register</a> to leave a comment.
+            </div>
+        {% endif %}
     </div>
 {% endblock %}
