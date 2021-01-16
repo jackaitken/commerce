@@ -3,6 +3,7 @@ from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
+from .forms import CreateListing
 
 from .models import User, Listing, Bid, Comment
 
@@ -67,20 +68,18 @@ def register(request):
 
 def create_listing(request):
     if request.method == "GET":
-        return render(request, "auctions/create_listing.html")
-    else:
-        title = request.POST["title"]
-        description = request.POST["description"]
-        price = int(request.POST["price"])
-        image = request.POST["url"]
-        category = request.POST["category"]
-        user = request.user
+        form = CreateListing()
+        return render(request, "auctions/create_listing.html", {
+            "form": form
+        })
 
-        new_listing = Listing(
-            user=user, title=title, description=description, price=price, image=image, category=category
-        )
-        new_listing.save()
-        return HttpResponseRedirect(reverse("listing", args={new_listing.id}))
+    else:
+        new_listing = CreateListing(request.POST)
+        if new_listing.is_valid():
+            add_listing = new_listing.save(commit=False)
+            add_listing.user = request.user
+            add_listing.save()
+            return HttpResponseRedirect(reverse("listing", args={add_listing.id}))
 
 def listing(request, listing_id):
     if request.method == "GET":
@@ -93,20 +92,6 @@ def listing(request, listing_id):
             "comments": comments
         })
         
-        # #condition for "posted by" information in template
-        # if listing.user == request.user:
-        #     return render(request, "auctions/listing.html",{
-        #         "listing": listing,
-        #         "current_user": request.user,
-        #         "category": listing.get_category_display(),
-        #         "comment": comments
-        #     })
-        # else:
-        #     return render(request, "auctions/listing.html",{
-        #         "listing": listing,
-        #         "category": listing.get_category_display(),
-        #         "comments": comments
-        #     })
     else:
         comment_title = request.POST["title"]
         comment = request.POST["comment"]

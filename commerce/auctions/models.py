@@ -1,6 +1,15 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
+CATEGORIES = (
+    ('N', 'None'),
+    ('E', 'Electronics'),
+    ('H', 'Home'),
+    ('F', 'Fashion'),
+    ('T', 'Toys'),
+    ('A', 'Automobiles'),
+    ('O', 'Other')
+)
 
 class User(AbstractUser):
     username = models.CharField(max_length=64, unique=True)
@@ -23,15 +32,6 @@ class Listing(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="listing")
     image = models.URLField(null=True, blank=True, verbose_name="image")
     comment = models.ManyToManyField(Comment, related_name="listing_comment")
-    CATEGORIES = (
-        ('N', 'None'),
-        ('E', 'Electronics'),
-        ('H', 'Home'),
-        ('F', 'Fashion'),
-        ('T', 'Toys'),
-        ('A', 'Automobiles'),
-        ('O', 'Other')
-    )
     category = models.CharField(max_length=1, choices=CATEGORIES, null=True)
 
     def __str__(self):
