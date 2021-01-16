@@ -104,13 +104,15 @@ def listing(request, listing_id):
     else:
         comment_title = request.POST["title"]
         comment = request.POST["comment"]
+        user = request.user
 
         new_comment = Comment(
-            title=comment_title, comment=comment, user=request.user
+            user=user, title=comment_title, comment=comment
         )
+        new_comment.save()
         listing = Listing.objects.get(pk=listing_id)
         listing.comment.add(new_comment)
-        return HttpResponseRedirect(reverse("listing", args=(listing.id)))
+        return HttpResponseRedirect(reverse("listing", args={listing.id}))
 
 def watchlist(request):
     return render(request, "auctions/watchlist.html")
