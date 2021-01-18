@@ -3,6 +3,7 @@ from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
+from django.contrib.auth.decorators import login_required
 from .forms import CreateListing, AddComment
 
 from .models import User, Listing, Bid, Comment
@@ -39,7 +40,6 @@ def logout_view(request):
     logout(request)
     return HttpResponseRedirect(reverse("index"))
 
-
 def register(request):
     if request.method == "POST":
         username = request.POST["username"]
@@ -66,6 +66,7 @@ def register(request):
     else:
         return render(request, "auctions/register.html")
 
+@login_required
 def create_listing(request):
     if request.method == "GET":
         form = CreateListing()
@@ -73,6 +74,7 @@ def create_listing(request):
             "form": form
         })
 
+    # Get listing information from form
     else:
         new_listing = CreateListing(request.POST)
         if new_listing.is_valid():
@@ -95,14 +97,25 @@ def listing(request, listing_id):
         })
         
     else:
-        comment = AddComment(request.POST)
-        if comment.is_valid():
-            new_comment = comment.save(commit=False)
-            new_comment.user = request.user
-            new_comment.save()
-            listing.comment.add(new_comment)
+        # Checks if POST is for a comment or watchlist 
+        if 'title' in request.POST:
+            comment = AddComment(request.POST)
+            if comment.is_valid():
+                new_comment = comment.save(commit=False)
+                new_comment.user = request.user
+                new_comment.save()
+                listing.comment.add(new_comment)
+        else:
+            #struggling with how to add to watchlist
+            User.listing_set.add(listing)
 
         return HttpResponseRedirect(reverse("listing", args={listing.id}))
 
+@login_required
 def watchlist(request):
-    return render(request, "auctions/watchlist.html")
+    user = User.objects.get(pk=request.user.id)
+    watchlist_items = user.watchlist
+
+    return render(request, "auctions/watchlist.html", {
+        "watchlist": watchlist_items
+    })

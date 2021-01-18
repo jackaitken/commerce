@@ -13,8 +13,15 @@
         <div>Posted by User: <strong>{{ listing.user }}</strong></div>
     {% endif %}
     
+    <!-- Comment Section -->
     <div>
         <strong> {{ comments|length }} Comment(s):</strong>
+        <div>
+            <form action="{% url 'listing' listing.id %}" method="post">
+                <button name="watchlist">Add to watchlist</button>
+                {% csrf_token %}
+            </form>
+        </div>
         <hr>
         <div>
             {% for comment in comments %}
@@ -28,6 +35,8 @@
                 <hr>
             {% endfor %}
         </div>
+
+        <!-- Not able to comment until logged in  -->
         {% if user.is_authenticated %}
             <form action="{% url 'listing' listing.id %}" method="post">
                 {% csrf_token %}
@@ -40,4 +49,6 @@
             </div>
         {% endif %}
     </div>
+    <!-- Comment Section End -->
+
 {% endblock %}

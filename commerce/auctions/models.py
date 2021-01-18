@@ -22,17 +22,17 @@ class Bid(models.Model):
 class Comment(models.Model):
     title = models.CharField(max_length=50, null=True)
     comment = models.CharField(max_length=200)
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="user_comments")
-
-    
+    user = models.ForeignKey('User', on_delete=models.CASCADE, related_name="user_comments")
+ 
 class Listing(models.Model):
     title = models.CharField(max_length=100, null=False)
     description = models.CharField(max_length=500, null=False)
     price = models.IntegerField()
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="listing")
     image = models.URLField(null=True, blank=True, verbose_name="image")
-    comment = models.ManyToManyField(Comment, related_name="listing_comment")
+    comment = models.ManyToManyField('Comment', related_name="listing_comment")
     category = models.CharField(max_length=1, choices=CATEGORIES, null=True)
+    add_to_watchlist = models.ManyToManyField(User, related_name="watchlist")
 
     def __str__(self):
         return f"{self.title}, posted by {self.user}"
