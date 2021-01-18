@@ -4,9 +4,10 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
+from django.core.exceptions import ObjectDoesNotExist
 from .forms import CreateListing, AddComment
 
-from .models import User, Listing, Bid, Comment
+from .models import User, Listing, Bid, Comment, Watchlist
 
 
 def index(request):
@@ -85,12 +86,13 @@ def create_listing(request):
 
 def listing(request, listing_id):
     listing = Listing.objects.get(pk=listing_id)
+    current_user = request.user
     if request.method == "GET":
         comments = listing.comment.all()
         comment_form = AddComment()
         return render(request, "auctions/listing.html",{
             "listing": listing,
-            "current_user": request.user,
+            "current_user": current_user,
             "category": listing.get_category_display(),
             "comments": comments,
             "comment_form": comment_form
@@ -102,19 +104,23 @@ def listing(request, listing_id):
             comment = AddComment(request.POST)
             if comment.is_valid():
                 new_comment = comment.save(commit=False)
-                new_comment.user = request.user
+                new_comment.user = current_user
                 new_comment.save()
                 listing.comment.add(new_comment)
         else:
             #struggling with how to add to watchlist
-            User.listing_set.add(listing)
+            try:
+                user_watchlist = Watchlist.objects.get(user=current_user)
+                user_watchlist.listing.add(listing)
+            except ObjectDoesNotExist:
+                new_watchlist = Watchlist.objects.create(user=current_user)
+                new_watchlist.add(listing)
 
         return HttpResponseRedirect(reverse("listing", args={listing.id}))
 
 @login_required
 def watchlist(request):
-    user = User.objects.get(pk=request.user.id)
-    watchlist_items = user.watchlist
+    watchlist_items = request.user.user_watchlist
 
     return render(request, "auctions/watchlist.html", {
         "watchlist": watchlist_items

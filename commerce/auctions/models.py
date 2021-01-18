@@ -12,8 +12,7 @@ CATEGORIES = (
 )
 
 class User(AbstractUser):
-    username = models.CharField(max_length=64, unique=True)
-    password = models.CharField(max_length=16)
+    Watchlist = models.OneToOneField('Watchlist', on_delete=models.CASCADE, null=True, related_name="user_watchlist")
 
 class Bid(models.Model):
     bids = models.IntegerField()
@@ -32,8 +31,18 @@ class Listing(models.Model):
     image = models.URLField(null=True, blank=True, verbose_name="image")
     comment = models.ManyToManyField('Comment', related_name="listing_comment")
     category = models.CharField(max_length=1, choices=CATEGORIES, null=True)
-    add_to_watchlist = models.ManyToManyField(User, related_name="watchlist")
 
     def __str__(self):
         return f"{self.title}, posted by {self.user}"
 
+class Watchlist(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="user_watchlist")
+    listing = models.ManyToManyField(Listing, related_name="listing_watchlist")
+
+    @classmethod
+    def create(user, listing):
+        new_watchlist = Watchlist(user=user, listing=listing)
+        return new_watchlist
+
+    def __str__(self):
+        return f"{self.user}'s watchlist"

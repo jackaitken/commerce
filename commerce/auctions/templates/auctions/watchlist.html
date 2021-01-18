@@ -2,8 +2,8 @@
 
 {% block body %}
     <h2>Watchlist</h2>
-    {% for item in watchlist %}
-        {item.title}
-        {item.description}  
+    {% for listing in watchlist %}
+        {listing.title}
+        {listing.description}  
     {% endfor %}  
 {% endblock %}
