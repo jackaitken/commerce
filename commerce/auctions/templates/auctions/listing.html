@@ -28,11 +28,10 @@
                 <hr>
             {% endfor %}
         </div>
-        {% if user.is_authenticated is True %}
+        {% if user.is_authenticated %}
             <form action="{% url 'listing' listing.id %}" method="post">
                 {% csrf_token %}
-                <div style="padding-bottom: 10px;"><input type="text" name="title" placeholder="Title"></div>
-                <textarea name="comment" cols="50" rows="5" placeholder="Add a comment"></textarea>
+                {{ comment_form }}
                 <div><input type="submit" value="Submit Comment"></div>
             </form>
         {% else %}

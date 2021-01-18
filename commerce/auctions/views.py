@@ -3,7 +3,7 @@ from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
-from .forms import CreateListing
+from .forms import CreateListing, AddComment
 
 from .models import User, Listing, Bid, Comment
 
@@ -82,27 +82,26 @@ def create_listing(request):
             return HttpResponseRedirect(reverse("listing", args={add_listing.id}))
 
 def listing(request, listing_id):
+    listing = Listing.objects.get(pk=listing_id)
     if request.method == "GET":
-        listing = Listing.objects.get(pk=listing_id)
         comments = listing.comment.all()
+        comment_form = AddComment()
         return render(request, "auctions/listing.html",{
             "listing": listing,
             "current_user": request.user,
             "category": listing.get_category_display(),
-            "comments": comments
+            "comments": comments,
+            "comment_form": comment_form
         })
         
     else:
-        comment_title = request.POST["title"]
-        comment = request.POST["comment"]
-        user = request.user
+        comment = AddComment(request.POST)
+        if comment.is_valid():
+            new_comment = comment.save(commit=False)
+            new_comment.user = request.user
+            new_comment.save()
+            listing.comment.add(new_comment)
 
-        new_comment = Comment(
-            user=user, title=comment_title, comment=comment
-        )
-        new_comment.save()
-        listing = Listing.objects.get(pk=listing_id)
-        listing.comment.add(new_comment)
         return HttpResponseRedirect(reverse("listing", args={listing.id}))
 
 def watchlist(request):

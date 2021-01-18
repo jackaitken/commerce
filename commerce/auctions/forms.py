@@ -14,3 +14,16 @@ class CreateListing(ModelForm):
         fields = [
             'title', 'description', 'price', 'image', 'category'
         ]
+
+class AddComment(ModelForm):
+    class Meta:
+        model = Comment
+
+        widget = {
+            'title': forms.TextInput(attrs={'placeholder':'Title'}),
+            'comment': forms.Textarea(attrs={'placeholder':'Add a comment'})
+        }
+
+        fields = [
+            'title', 'comment'
+        ]
