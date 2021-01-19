@@ -110,12 +110,15 @@ def listing(request, listing_id):
         else:
             #struggling with how to add to watchlist
             try:
-                user_watchlist = Watchlist.objects.get(user=current_user)
-                user_watchlist.listing.add(listing)
+                user_watchlist = Watchlist.objects.get(pk=current_user.id)
+                watchlist_add = listing.save(commit=False)
+                watchlist_add.save()
+                user_watchlist.listing.add(watchlist_add)
             except ObjectDoesNotExist:
-                new_watchlist = Watchlist.objects.create(user=current_user)
-                new_watchlist.add(listing)
-
+                new_watchlist = Watchlist(user=current_user)
+                new_watchlist.save()
+                new_watchlist.listing.add(listing)
+                
         return HttpResponseRedirect(reverse("listing", args={listing.id}))
 
 @login_required

@@ -12,7 +12,7 @@ CATEGORIES = (
 )
 
 class User(AbstractUser):
-    Watchlist = models.OneToOneField('Watchlist', on_delete=models.CASCADE, null=True, related_name="user_watchlist")
+    watchlist = models.ManyToManyField('Watchlist', related_name="user_watchlist")
 
 class Bid(models.Model):
     bids = models.IntegerField()
@@ -36,13 +36,8 @@ class Listing(models.Model):
         return f"{self.title}, posted by {self.user}"
 
 class Watchlist(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="user_watchlist")
     listing = models.ManyToManyField(Listing, related_name="listing_watchlist")
-
-    @classmethod
-    def create(user, listing):
-        new_watchlist = Watchlist(user=user, listing=listing)
-        return new_watchlist
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="user_watchlist")
 
     def __str__(self):
         return f"{self.user}'s watchlist"
